@@ -1823,37 +1823,53 @@ class DefaultAssetPickerBuilderDelegate
         final bool isSelectedNotEmpty = p.isSelectedNotEmpty;
         final bool shouldAllowConfirm =
             isSelectedNotEmpty || p.previousSelectedAssets.isNotEmpty;
-        return MaterialButton(
-          minWidth: shouldAllowConfirm ? 48 : 20,
-          height: appBarItemHeight,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          color: theme.colorScheme.secondary,
-          disabledColor: theme.splashColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
-          ),
-          onPressed: shouldAllowConfirm
+        return GestureDetector(
+          onTap: shouldAllowConfirm
               ? () {
                   Navigator.maybeOf(context)?.maybePop(p.selectedAssets);
                 }
               : null,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          child: ScaleText(
-            isSelectedNotEmpty && !isSingleAssetMode
-                ? '${textDelegate.confirm}'
-                    ' (${p.selectedAssets.length}/${p.maxAssets})'
-                : textDelegate.confirm,
-            style: TextStyle(
-              color: shouldAllowConfirm
-                  ? theme.textTheme.bodyLarge?.color
-                  : theme.textTheme.bodySmall?.color,
-              fontSize: 17,
-              fontWeight: FontWeight.normal,
-            ),
-            semanticsLabel: isSelectedNotEmpty && !isSingleAssetMode
-                ? '${semanticsTextDelegate.confirm}'
-                    ' (${p.selectedAssets.length}/${p.maxAssets})'
-                : semanticsTextDelegate.confirm,
+          child: Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isSelectedNotEmpty
+                        ? theme.colorScheme.secondary
+                        : theme.splashColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25.0,
+                  vertical: 8,
+                ),
+                child: ScaleText(
+                  isSelectedNotEmpty && !isSingleAssetMode
+                      ? '${textDelegate.confirm}'
+                          ' (${p.selectedAssets.length}/${p.maxAssets})'
+                      : textDelegate.confirm,
+                  style: TextStyle(
+                    color: shouldAllowConfirm
+                        ? theme.textTheme.bodyLarge?.color
+                        : theme.textTheme.bodySmall?.color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  strutStyle: const StrutStyle(
+                    fontSize: 18,
+                    forceStrutHeight: true,
+                  ),
+                  semanticsLabel: isSelectedNotEmpty && !isSingleAssetMode
+                      ? '${semanticsTextDelegate.confirm}'
+                          ' (${p.selectedAssets.length}/${p.maxAssets})'
+                      : semanticsTextDelegate.confirm,
+                ),
+              ),
+            ],
           ),
         );
       },

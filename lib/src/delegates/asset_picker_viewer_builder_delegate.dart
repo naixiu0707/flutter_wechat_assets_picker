@@ -830,41 +830,53 @@ class DefaultAssetPickerViewerBuilderDelegate
           final isButtonEnabled = provider == null ||
               previewAssets.isEmpty ||
               (selectedAssets?.isNotEmpty ?? false);
-          return MaterialButton(
-            minWidth:
-                (isWeChatMoment && hasVideo) || provider!.isSelectedNotEmpty
-                    ? 48
-                    : 20,
-            height: 32,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            color: themeData.colorScheme.secondary,
-            disabledColor: themeData.splashColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(3),
-            ),
-            onPressed: isButtonEnabled ? onPressed : null,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            child: ScaleText(
-              buildText(),
-              style: TextStyle(
-                color: themeData.textTheme.bodyLarge?.color,
-                fontSize: 17,
-                fontWeight: FontWeight.normal,
-              ),
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              semanticsLabel: () {
-                if (isWeChatMoment && hasVideo) {
-                  return semanticsTextDelegate.confirm;
-                }
-                if (provider!.isSelectedNotEmpty) {
-                  return '${semanticsTextDelegate.confirm}'
-                      ' (${provider.currentlySelectedAssets.length}'
-                      '/'
-                      '${selectorProvider!.maxAssets})';
-                }
-                return semanticsTextDelegate.confirm;
-              }(),
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: isButtonEnabled ? onPressed : null,
+            child: Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isButtonEnabled
+                          ? themeData.colorScheme.secondary
+                          : themeData.splashColor,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: ScaleText(
+                    buildText(),
+                    style: TextStyle(
+                      color: themeData.textTheme.bodyLarge?.color,
+                      fontSize: 18,
+                      fontWeight: themeData.textTheme.bodyLarge?.fontWeight,
+                    ),
+                    strutStyle: const StrutStyle(
+                      fontSize: 18,
+                      forceStrutHeight: true,
+                    ),
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    semanticsLabel: () {
+                      if (isWeChatMoment && hasVideo) {
+                        return semanticsTextDelegate.confirm;
+                      }
+                      if (provider!.isSelectedNotEmpty) {
+                        return '${semanticsTextDelegate.confirm}'
+                            ' (${provider.currentlySelectedAssets.length}'
+                            '/'
+                            '${selectorProvider!.maxAssets})';
+                      }
+                      return semanticsTextDelegate.confirm;
+                    }(),
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -892,7 +904,7 @@ class DefaultAssetPickerViewerBuilderDelegate
         },
         child: AnimatedContainer(
           duration: kThemeAnimationDuration,
-          width: 28.0,
+          width: 20.0,
           decoration: BoxDecoration(
             border: !isSelected
                 ? Border.all(color: themeData.iconTheme.color!)
@@ -963,16 +975,22 @@ class DefaultAssetPickerViewerBuilderDelegate
                 onTapHint: semanticsTextDelegate.select,
                 excludeSemantics: true,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    if (isAppleOS(context))
-                      _appleOSSelectButton(context, isSelected, asset)
-                    else
-                      _androidSelectButton(context, isSelected, asset),
+                    _appleOSSelectButton(context, isSelected, asset),
+                    // if (isAppleOS(context))
+                    //   _appleOSSelectButton(context, isSelected, asset)
+                    // else
+                    //   _androidSelectButton(context, isSelected, asset),
                     if (!isAppleOS(context))
                       ScaleText(
                         textDelegate.select,
-                        style: const TextStyle(fontSize: 17, height: 1.2),
+                        strutStyle: const StrutStyle(
+                          fontSize: 17,
+                          forceStrutHeight: true,
+                        ),
+                        style: const TextStyle(fontSize: 17),
                         semanticsLabel: semanticsTextDelegate.select,
                       ),
                   ],
